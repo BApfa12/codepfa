@@ -1,0 +1,74 @@
+pipeline{
+    agent any
+    environment {
+        registry = "pfa123/pfa1.0"
+        registryCredential = 'dockerhubpfa'
+        dockerImage = ''
+        DH_CREDS=credentials('dockerhubpfa')
+	}
+    stages{
+        stage('Build'){
+
+
+        steps {
+            checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://gitlab.com/nanuchi/developing-with-docker.git']])
+            dir('app'){
+                bat 'npm install'
+            }
+
+        }
+        }
+
+        stage('Image'){
+            steps{
+
+                script{
+                    //bat 'docker build -t pfa123/pfa1.0 .'
+                     dockerImage = docker.build registry
+
+
+                }
+            }
+        }
+
+
+        stage('push'){
+                    steps{
+                script{
+docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+dockerImage.push("latest")
+
+            }
+        }
+
+    }
+    }
+        stage('scan image'){
+            steps{
+                script{
+                    docker.withRegistry( '', registryCredential ){
+
+            bat "docker pull pfa123/pfa1.0:latest"
+            bat "docker scout version"
+            bat "docker scout cves  %dockerImage% > cves.html"
+            bat "docker scout recommendations %dockerImage% > scoutrecommendations.html"
+            }
+            }
+
+
+             }
+    }
+    stage('Deploy to K8s'){
+        steps{
+            script{
+                kubernetesDeploy (configs: 'app-deployement.yaml',kubeconfigId: 'k8sconfig')
+            }
+        }
+    }
+}
+  post {
+    always {
+      bat 'docker logout'
+    }
+  }
+}
