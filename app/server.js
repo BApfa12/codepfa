@@ -21,7 +21,7 @@ app.get('/profile-picture', function (req, res) {
 });
 
 // MongoDB connection URL
-const mongoUrl = process.env.MONGO_URL || "mongodb://admin:password@mongodb:27017";
+const mongoUrl = process.env.MONGO_URL || "mongodb://username:password@mongodb:27017";
 const mongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 const databaseName = "my-db";
 
