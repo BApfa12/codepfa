@@ -23,8 +23,9 @@ if (process.env.MONGO_URL) {
 }
 else if (process.env.KUBERNETES_ENV) {
   mongoUrl = "mongodb://admin:password@mongodb-svc:27017"; // For Kubernetes
-} else {
-  mongoUrl = "mongodb://admin:password@localhost:27017"; // For local development
+}
+else {
+  mongoUrl = "mongodb://admin:password@localhost:27017/my-db"; // For local development
 }
 
 // use when starting application locally with node command
@@ -36,10 +37,11 @@ let mongoUrlDockerCompose = "mongodb://admin:password@mongodb";
 // pass these options to mongo client connect request to avoid DeprecationWarning for current Server Discovery and Monitoring engine
 let mongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 // "user-account" in demo with docker. "my-db" in demo with docker-compose
+
 let databaseName = "my-db";
 app.post('/update-profile', function (req, res) {
   let userObj = req.body;
-  MongoClient.connect(mongoUrl, mongoClientOptions, function (err, client) {
+  MongoClient.connect(mongoUrlLocal, mongoClientOptions, function (err, client) {
     if (err) throw err;
     let db = client.db(databaseName);
     userObj['userid'] = 1;
@@ -56,7 +58,7 @@ app.post('/update-profile', function (req, res) {
 app.get('/get-profile', function (req, res) {
   let response = {};
   // Connect to the db
-  MongoClient.connect(mongoUrl, mongoClientOptions, function (err, client) {
+  MongoClient.connect(mongoUrlLocal, mongoClientOptions, function (err, client) {
     if (err) throw err;
     let db = client.db(databaseName);
     let myquery = { userid: 1 };
