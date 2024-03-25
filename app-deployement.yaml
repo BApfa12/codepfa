@@ -19,7 +19,7 @@ spec:
             - containerPort: 3000
           env:
             - name: MONGO_URL
-              value: "mongodb://username:password@mongodb:27017" # Update with your MongoDB connection details
+              value: "mongodb://admin:password@mongodb:27017" # Update with your MongoDB connection details
             - name: KUBERNETES_ENV
               value: "true"
 ---
