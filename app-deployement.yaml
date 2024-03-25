@@ -15,9 +15,6 @@ spec:
       containers:
         - name: express-app
           image: pfa123/pfa1.0:latest
-          envFrom:
-         - configMapRef:
-          name: mongodb-config
           ports:
             - containerPort: 3000
           env:
@@ -39,4 +36,3 @@ spec:
       port: 80
       targetPort: 3000
       nodePort: 32000
-
