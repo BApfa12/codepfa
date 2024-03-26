@@ -1,70 +1,85 @@
 pipeline{
-    agent any
+    agent any    
     environment {
         registry = "pfa123/pfa1.0"
         registryCredential = 'dockerhubpfa'
         dockerImage = ''
         DH_CREDS=credentials('dockerhubpfa')
-	}
+        KUBECONFIG = credentials('k8s')
+    
+	}  
     stages{
         stage('Build'){
-
-
+      
+        
         steps {
-            checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://gitlab.com/nanuchi/developing-with-docker.git']])
+           checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/BApfa12/codepfa/']])
             dir('app'){
                 bat 'npm install'
+                bat 'npm audit fix'
             }
-
+               
         }
         }
-
+    
         stage('Image'){
             steps{
-
-                script{
+                  script{
                     //bat 'docker build -t pfa123/pfa1.0 .'
-                     dockerImage = docker.build registry
-
-
+                     dockerImage = docker.build registry 
+                
+              
                 }
             }
         }
-
-
+ 
+              
         stage('push'){
                     steps{
                 script{
 docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
 dockerImage.push("latest")
-
+        
             }
         }
-
+ 
     }
     }
         stage('scan image'){
             steps{
                 script{
                     docker.withRegistry( '', registryCredential ){
-
+            
             bat "docker pull pfa123/pfa1.0:latest"
             bat "docker scout version"
-            bat "docker scout cves  %dockerImage% > cves.html"
-            bat "docker scout recommendations %dockerImage% > scoutrecommendations.html"
+            bat "docker scout cves  %dockerImage% "
+            bat "docker scout recommendations %dockerImage% "
             }
             }
-
-
+                
+            
              }
     }
     stage('Deploy to K8s'){
         steps{
             script{
-                kubernetesDeploy (configs: 'app-deployement.yaml',kubeconfigId: 'k8sconfig')
+                bat 'kubectl'
+                kubernetesDeploy (configs:'app-deployement.yaml',kubeconfigId: 'k8scon')
+                //bat 'kubectl apply -f app-deployement.yaml'
+                kubernetesDeploy (configs:'mongo-express.yaml',kubeconfigId: 'k8scon')
+                 kubernetesDeploy (configs:'mongo-configmap.yaml',kubeconfigId: 'k8scon')
+                 kubernetesDeploy (configs:'mongo-secret.yaml',kubeconfigId: 'k8scon')
+                 kubernetesDeploy (configs:'mongo.yaml',kubeconfigId: 'k8scon')
+                 kubernetesDeploy (configs:'app-configmap.yaml',kubeconfigId: 'k8scon')
             }
         }
     }
+   /* stage('Deploy to k8s'){
+        steps{
+            //bat 'kubectl apply -f app-deployement.yaml'
+            bat 'kubectl'
+        }
+    }*/
 }
   post {
     always {
