@@ -27,7 +27,7 @@ else if (process.env.KUBERNETES_ENV) {
 else {
   mongoUrl = "mongodb://admin:password@localhost:27017/my-db"; // For local development
 }
-
+/*
 // use when starting application locally with node command
 let mongoUrlLocal = "mongodb://admin:password@localhost:27017";
 // use when starting application as a separate docker container
@@ -36,8 +36,7 @@ let mongoUrlDocker = "mongodb://admin:password@host.docker.internal:27017";
 let mongoUrlDockerCompose = "mongodb://admin:password@mongodb";
 // pass these options to mongo client connect request to avoid DeprecationWarning for current Server Discovery and Monitoring engine
 let mongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true };
-// "user-account" in demo with docker. "my-db" in demo with docker-compose
-
+*/
 let databaseName = "my-db";
 app.post('/update-profile', function (req, res) {
   let userObj = req.body;
