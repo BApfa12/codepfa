@@ -54,7 +54,7 @@ spec:
       port: 27017
       targetPort: 27017
 ---
-kind: "Endpoints"
+kind: Endpoints
 apiVersion: "v1"
 metadata:
   name: 
