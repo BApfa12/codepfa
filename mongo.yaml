@@ -31,7 +31,7 @@ spec:
                 key: mongo-root-password
         volumeMounts:
         - name: mongo-data
-          mountPath: "C:\Program Files\MongoDB\Server\7.0\data"
+          mountPath: "C:\\Program Files\\MongoDB\\Server\\7.0\\data"
   volumeClaimTemplates:
   - metadata:
       name: mongo-data
@@ -55,8 +55,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: "C:\Program Files\MongoDB\Server\7.0\data" # Change this to the actual host path where you want to persist data
-
+    path: "C:\\Program Files\\MongoDB\\Server\\7.0\\data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
