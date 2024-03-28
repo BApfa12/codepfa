@@ -53,3 +53,14 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
+---
+kind: "Endpoints"
+apiVersion: "v1"
+metadata:
+  name: 
+  namespace: external
+subsets: 
+- addresses:
+  - ip: " 10.96.7.77"
+  ports:
+    port: 27017
